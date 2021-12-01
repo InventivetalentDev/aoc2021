@@ -3,14 +3,27 @@ package org.inventivetalent.aoc;
 import org.apache.commons.io.IOUtil;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Day {
 
 
     public Day() {
-        Object out = run(getInput());
-        System.out.println("---------------------");
-        System.out.println(out);
+        Object out = run1(getInput());
+        if (out != null) {
+            System.out.println("PART 1");
+            System.out.println("---------------------");
+            System.out.println(out);
+        }
+
+        System.out.println(" ");
+
+        out = run2(getInput());
+        if (out != null) {
+            System.out.println("PART 2");
+            System.out.println("---------------------");
+            System.out.println(out);
+        }
     }
 
     public String getInput() {
@@ -26,6 +39,12 @@ public abstract class Day {
         return List.of(input.split("\r\n"));
     }
 
-    public abstract Object run(String input);
+    public static List<Integer> asIntLines(String input) {
+        return asLines(input).stream().map(Integer::parseInt).collect(Collectors.toList());
+    }
+
+    public abstract Object run1(String input);
+
+    public abstract Object run2(String input);
 
 }
