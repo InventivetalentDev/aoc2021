@@ -33,7 +33,28 @@ public class Day2 extends Day {
 
     @Override
     public Object run2(String input) {
-        return null;
+        List<String> lines = asLines(input);
+
+        int aim = 0;
+        int x = 0;
+        int y = 0;
+        for (var line : lines) {
+            var split = line.split(" ");
+            var dir = split[0];
+            var amount = Integer.parseInt(split[1]);
+
+            switch (dir) {
+                case "forward" -> {
+                    x += amount;
+                    y += aim * amount;
+                }
+                case "down" -> aim += amount;
+                case "up" -> aim -= amount;
+            }
+        }
+
+        System.out.println(x + " " + y);
+        return x * y;
     }
 
     public static void main(String[] args) {
