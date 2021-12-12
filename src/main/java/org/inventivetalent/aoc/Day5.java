@@ -94,7 +94,32 @@ public class Day5 extends Day {
 
     @Override
     public Object run2(String input) {
-        return null;
+        var lines = parseInput(input);
+        System.out.println(lines);
+        var grid = makeGrid(lines);
+
+
+        for (var line : lines) {
+            for (var point : line) {
+                grid[point.y][point.x] += 1;
+            }
+        }
+
+        System.out.println();
+        print(grid);
+
+
+        int overlaps = 0;
+        // iterate grid
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] >= 2) {
+                    overlaps++;
+                }
+            }
+        }
+
+        return overlaps;
     }
 
     public static void main(String[] args) {
