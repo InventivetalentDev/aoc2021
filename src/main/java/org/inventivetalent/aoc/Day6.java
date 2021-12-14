@@ -36,7 +36,7 @@ public class Day6 extends Day {
 
         }
 
-        return null;
+        return timers.size();
     }
 
     @Override
