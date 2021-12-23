@@ -1,7 +1,9 @@
 package org.inventivetalent.aoc;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Day10 extends Day {
 
@@ -31,8 +33,10 @@ public class Day10 extends Day {
         return 0;
     }
 
-    Character processLine(String line) {
+    Character processLine(String line, AtomicReference<String> finalLine) {
         int iterations = line.length();
+
+        Character invalidToken = null;
 
         StringBuilder tempLine = new StringBuilder(line);
         for (int i1 = 0; i1 < iterations + 1; i1++) {
@@ -40,7 +44,6 @@ public class Day10 extends Day {
             for (int i = 0; i < tempLine.length(); i++) {
                 char token = tempLine.charAt(i);
                 if (token == '(' || token == '{' || token == '[' || token == '<') {
-
                 }
                 if (token == ')' || token == '}' || token == ']' || token == '>') {
                     char matchingToken = matchingToken(token);
@@ -52,12 +55,15 @@ public class Day10 extends Day {
                     } else if (lastIteration) {
                         System.out.println("Mismatch: " + token + " " + leftToken);
                         System.out.println("Expected " + matchingToken(leftToken) + ", but found " + token);
-                        return token; // stop at first mismatch
+                        if (invalidToken == null) {
+                            invalidToken = token;
+                        }
                     }
                 }
             }
         }
-        return null;
+        finalLine.set(tempLine.toString());
+        return invalidToken;
 
         /*
         List<Character> open = new ArrayList<>();
@@ -94,7 +100,7 @@ public class Day10 extends Day {
         var lines = asLines(input);
         List<Character> invalidTokens = new ArrayList<>();
         for (var line : lines) {
-            Character invalidToken = processLine(line);
+            Character invalidToken = processLine(line, new AtomicReference<>());
             if (invalidToken != null) {
                 invalidTokens.add(invalidToken);
             }
@@ -124,7 +130,55 @@ public class Day10 extends Day {
 
     @Override
     public Object run2(String input) {
-        return null;
+        var lines = asLines(input);
+        List<String> uncorruptedLines = new ArrayList<>();
+
+        List<Long> scores = new ArrayList<>();
+        for (var line : lines) {
+            long lineScore = 0;
+
+            AtomicReference<String> finalLine = new AtomicReference<>();
+            Character invalidToken = processLine(line, finalLine);
+            if (invalidToken == null) {
+                uncorruptedLines.add(line);
+
+                StringBuilder completion = new StringBuilder();
+                for (int i = finalLine.get().length(); i > 0; i--) {
+                    char c = finalLine.get().charAt(i - 1);
+                    char match = matchingToken(c);
+                    completion.append(match);
+
+                    lineScore *= 5;
+                    switch (match) {
+                        case ')':
+                            lineScore += 1;
+                            break;
+                        case ']':
+                            lineScore += 2;
+                            break;
+                        case '}':
+                            lineScore += 3;
+                            break;
+                        case '>':
+                            lineScore += 4;
+                            break;
+                    }
+                }
+                System.out.println();
+                System.out.println("line:" + line);
+                System.out.println("finalLine:" + finalLine.get());
+                System.out.println("completion:" + completion);
+                System.out.println("line score:" + lineScore);
+                scores.add(lineScore);
+            }
+
+
+        }
+
+
+        scores.sort(Comparator.naturalOrder());
+        System.out.println(scores);
+        return scores.get(scores.size() / 2);
     }
 
     public static void main(String[] args) {
